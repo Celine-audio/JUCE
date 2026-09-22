@@ -1108,12 +1108,13 @@ AudioDeviceSelectorComponent::AudioDeviceSelectorComponent (AudioDeviceManager& 
         midiInputsLabel->setJustificationType (Justification::topRight);
         midiInputsLabel->attachToComponent (midiInputsList.get(), true);
 
-        if (BluetoothMidiDevicePairingDialogue::isAvailable())
-        {
-            bluetoothButton = std::make_unique<TextButton> (TRANS ("Bluetooth MIDI"), TRANS ("Scan for bluetooth MIDI devices"));
-            addAndMakeVisible (bluetoothButton.get());
-            bluetoothButton->onClick = [this] { handleBluetoothButton(); };
-        }
+        // Celine: no Bluetooth MIDI pairing button. Opening that dialogue is
+        // CoreBluetooth's business, and macOS ends any process that reaches for it
+        // without NSBluetoothAlwaysUsageDescription in its Info.plist -- which a plugin's
+        // standalone wrapper has no way to carry, so the button was a crash with a label
+        // on it. handleBluetoothButton() and the field are left in place so the rest of
+        // this class, and anything that merges upstream into this fork, still compiles;
+        // nothing creates the button, so nothing can press it.
     }
     else
     {

@@ -931,8 +931,8 @@ private:
             {
                 setOpaque (true);
 
-                notification.setColour (Label::textColourId, Colours::black);
-
+                // Celine: the label's colour is the look and feel's, not black on
+                // yellow -- see paint().
                 settingsButton.addListener (settingsButtonListener);
 
                 addAndMakeVisible (notification);
@@ -943,10 +943,23 @@ private:
             {
                 auto r = getLocalBounds();
 
-                g.setColour (Colours::darkgoldenrod);
+                // Celine: painted from the look and feel in force rather than from a
+                // fixed goldenrod, so a plugin that themes its window themes this bar
+                // with it -- a strip of another program's colours across the top of an
+                // otherwise finished window is the one thing every standalone here had
+                // to paint over by hand. Stock JUCE reaches LookAndFeel_V4's own window
+                // colour here, which is dark rather than yellow but still its own.
+                //
+                // ResizableWindow::backgroundColourId and Label::textColourId, because
+                // every LookAndFeel defines both: this cannot land on a colour nobody
+                // set. The rule is the ground contrasted rather than a colour of its own,
+                // so it reads on a light theme and on a dark one.
+                const auto ground = getLookAndFeel().findColour (ResizableWindow::backgroundColourId);
+
+                g.setColour (ground.contrasting (0.3f));
                 g.fillRect (r.removeFromBottom (1));
 
-                g.setColour (Colours::lightgoldenrodyellow);
+                g.setColour (ground);
                 g.fillRect (r);
             }
 
